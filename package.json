@@ -6,7 +6,8 @@
     "serve": "vite preview",
     "build": "vite build",
     "dev": "vite",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "proxy": "lcp --proxyUrl https://nationalbank.kz"
   },
   "dependencies": {
     "@mdi/font": "5.9.55",
@@ -17,7 +18,8 @@
     "vue-router": "^4.1.6",
     "vue3-datepicker": "^0.3.4",
     "vuetify": "^3.1.4",
-    "webfontloader": "^1.0.0"
+    "webfontloader": "^1.0.0",
+    "xml-js": "^1.6.11"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.1.0",

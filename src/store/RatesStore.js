@@ -2,10 +2,11 @@ import { defineStore } from "pinia";
 import { ref, computed, watch } from "vue";
 import axios from "axios";
 
-const URL = "https://nationalbank.kz/rss/get_rates.cfm";
+const URL = "http://localhost:8010/proxy/rss/get_rates.cfm";
 
 export const useRatesStore = defineStore("rateStore", () => {
   const rates = ref([]);
+  const ratez = ref([]);
 
   const ratesInLocalStorage = localStorage.getItem("rates");
   if (ratesInLocalStorage) {
@@ -72,16 +73,59 @@ export const useRatesStore = defineStore("rateStore", () => {
       quant: 1,
     },
   ];
+  function parseXMLToJSON2(xmlString) {
+    const parser = new DOMParser().parseFromString(xmlString, "text/xml");
+    console.log("im a parser");
+    console.log(parser);
+    const currentRates = parser.querySelectorAll("item");
+    for (const item of currentRates) {
+      const rate = {
+        fullname: item.querySelector("fullname").textContent,
+        title: item.querySelector("title").textContent,
+        description: parseFloat(item.querySelector("description").textContent),
+        quant: item.querySelector("quant").textContent,
+      };
+      console.log(rate);
+      ratez.value.push(rate);
+    }
+    console.log(ratez.value);
+    return ratez.value;
+  }
+  // function parseXMLToJSON(xmlString) {
+  //   const parser = new DOMParser().parseFromString(xmlString, "text/xml");
+  //   const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+  //   const rates = xmlDoc.getElementsByTagName("item");
+  //   const result = [];
+
+  //   for (let i = 0; i < rates.length; i++) {
+  //     const rate = rates[i];
+  //     const item = {
+  //       fullname: rate.getElementsByTagName("fullname")[0].textContent,
+  //       title: rate.getElementsByTagName("title")[0].textContent,
+  //       description: parseFloat(
+  //         rate.getElementsByTagName("description")[0].textContent
+  //       ),
+  //       quant: parseFloat(rate.getElementsByTagName("quant")[0].textContent),
+  //     };
+  //     result.push(item);
+  //   }
+
+  //   return result;
+  // }
   const getRates = async () => {
-    const date = "2.04.2022";
+    const date = "22.04.2023";
     await axios
       .get(`${URL}`, {
         params: {
           fdate: date,
+          // _limit: 10,
         },
       })
       .then((response) => {
-        console.log(response.data);
+        // console.log("Darina:" + response.data);
+        const data = parseXMLToJSON2(response.data);
+
+        console.log("Darina:" + data[3]["description"]);
       })
       .catch((error) => console.log("error: " + error));
   };

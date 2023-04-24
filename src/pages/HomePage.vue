@@ -8,11 +8,11 @@
           :upper-limit="selected"
       /></v-col>
       <v-col cols="3">
-        <v-autocomplete
+        <!-- <v-autocomplete
           v-model="values"
           :items="items"
           label="Sort"
-        ></v-autocomplete>
+        ></v-autocomplete> -->
       </v-col>
     </VContainer>
     <VRow dense>
