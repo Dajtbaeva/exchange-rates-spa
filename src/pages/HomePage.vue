@@ -8,23 +8,39 @@
           :upper-limit="selected"
       /></v-col>
       <v-col cols="3">
-        <!-- <v-autocomplete
+        <v-autocomplete
           v-model="values"
-          :items="items"
+          :items="options"
           label="Sort"
-        ></v-autocomplete> -->
+        ></v-autocomplete>
       </v-col>
     </VContainer>
-    <VRow dense>
-      {{ selectedDate }}
-      <VCol v-for="n in 4" :key="n" cols="12">
-        <VCard
-          :title="`Content ${n}`"
-          :subtitle="`Subtitle for Content ${n}`"
-          text="Lorem ipsum dolor sit amet consectetur, adipisicing elit.?"
-        ></VCard>
-      </VCol>
-    </VRow>
+    <v-list>
+      <h3 align="center">Exchange Rates for {{ selectedDate }}</h3>
+      <v-list-item v-for="item of ratesStore.ratez" :key="item.title">
+        <template v-slot:default>
+          <v-row align="center" class="card">
+            <v-col cols="1" align="center">
+              <v-img :src="item.icon" height="25" width="70"></v-img>
+            </v-col>
+            <v-col cols="5">
+              <v-list-item-text
+                >{{ item.quant }} {{ item.fullname }}</v-list-item-text
+              ></v-col
+            >
+            <v-col cols="3">
+              <v-list-item-text>{{ item.title }} / KZT</v-list-item-text>
+            </v-col>
+            <v-col cols="2">
+              <v-list-item-text v-text="item.description"></v-list-item-text
+            ></v-col>
+            <v-col cols="1" class="text-right">
+              <v-btn class="ma-2" variant="text" icon="mdi-thumb-up"></v-btn>
+            </v-col>
+          </v-row>
+        </template>
+      </v-list-item>
+    </v-list>
   </VContainer>
 </template>
 <script>
@@ -39,6 +55,10 @@ export default {
   data() {
     return {
       loading: false,
+      options: [
+        { value: "fullname", name: "By name" },
+        { value: "title", name: "By code" },
+      ],
     };
   },
   setup() {
@@ -60,10 +80,17 @@ export default {
   justify-content: space-between;
   align-items: center;
   align-content: center;
+  /* margin: 0; */
+  padding: 0;
 }
 .datepicker {
   border: 1px solid #000000;
   width: 100%;
   height: 50%;
+}
+.card {
+  border: 1px solid #5f5f5f;
+  margin: 0;
+  padding: 0;
 }
 </style>

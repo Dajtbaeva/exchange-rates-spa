@@ -84,6 +84,10 @@ export const useRatesStore = defineStore("rateStore", () => {
         title: item.querySelector("title").textContent,
         description: parseFloat(item.querySelector("description").textContent),
         quant: item.querySelector("quant").textContent,
+        icon: `https://flagcdn.com/w320/${item
+          .querySelector("title")
+          .textContent.toLowerCase()
+          .slice(0, 2)}.png`,
       };
       console.log(rate);
       ratez.value.push(rate);
@@ -109,11 +113,9 @@ export const useRatesStore = defineStore("rateStore", () => {
   //     };
   //     result.push(item);
   //   }
-
   //   return result;
   // }
-  const getRates = async () => {
-    const date = "22.04.2023";
+  const getRates = async (date) => {
     await axios
       .get(`${URL}`, {
         params: {
@@ -125,7 +127,7 @@ export const useRatesStore = defineStore("rateStore", () => {
         // console.log("Darina:" + response.data);
         const data = parseXMLToJSON2(response.data);
 
-        console.log("Darina:" + data[3]["description"]);
+        console.log("Darina:" + data);
       })
       .catch((error) => console.log("error: " + error));
   };
@@ -162,7 +164,7 @@ export const useRatesStore = defineStore("rateStore", () => {
   );
 
   return {
-    rates,
+    ratez,
     likedRates,
     totalRates,
     getFakeRates,
