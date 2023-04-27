@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, computed, watch } from "vue";
 import axios from "axios";
+import { XMLParser } from "fast-xml-parser";
 
 const URL = "http://localhost:8010/proxy/rss/get_rates.cfm";
 
@@ -95,6 +96,11 @@ export const useRatesStore = defineStore("rateStore", () => {
     console.log(ratez.value);
     return ratez.value;
   }
+  function parseXMLToJSON3(xmlString) {
+    const parser = new XMLParser();
+    const currentRates = parser.parse(xmlString);
+     console.log("THIS IS PARSER #3:" + currentRates[0]);
+  }
   // function parseXMLToJSON(xmlString) {
   //   const parser = new DOMParser().parseFromString(xmlString, "text/xml");
   //   const xmlDoc = parser.parseFromString(xmlString, "text/xml");
@@ -126,7 +132,7 @@ export const useRatesStore = defineStore("rateStore", () => {
       .then((response) => {
         // console.log("Darina:" + response.data);
         const data = parseXMLToJSON2(response.data);
-
+        parseXMLToJSON3(response.data);
         console.log("Darina:" + data);
       })
       .catch((error) => console.log("error: " + error));
