@@ -1,23 +1,23 @@
 <template>
-  <VContainer fluid>
-    <VContainer class="container">
+  <v-container fluid>
+    <v-container class="container">
       <v-col cols="3">
         <datepicker
-          v-model="selected"
+          v-model="selectedDay"
           class="datepicker"
-          :upper-limit="selected"
+          :upper-limit="selectedDay"
       /></v-col>
       <v-col cols="3">
         <v-autocomplete
-          v-model="values"
+          v-model="selectedOption"
           :items="options"
           label="Sort"
         ></v-autocomplete>
       </v-col>
-    </VContainer>
-    <v-list>
+    </v-container>
+    <v-list v-if="!loading">
       <h3 align="center">Exchange Rates for {{ selectedDate }}</h3>
-      <v-list-item v-for="item of ratesStore.ratez" :key="item.title">
+      <v-list-item v-for="item of ratez" :key="item.title">
         <template v-slot:default>
           <v-row align="center" class="card">
             <v-col cols="1" align="center">
@@ -41,7 +41,8 @@
         </template>
       </v-list-item>
     </v-list>
-  </VContainer>
+    <h3 align="center" v-else>Loading...</h3>
+  </v-container>
 </template>
 <script>
 import { ref, computed } from "vue";
@@ -54,24 +55,56 @@ export default {
   },
   data() {
     return {
-      loading: false,
       options: [
-        { value: "fullname", name: "By name" },
-        { value: "title", name: "By code" },
+        { value: "fullname", title: "By name" },
+        { value: "title", title: "By code" },
       ],
     };
   },
   setup() {
-    const ratesStore = useRatesStore();
-    const selected = ref(new Date());
+    const {
+      loading,
+      ratez,
+      likedRates,
+      totalRates,
+      getRates,
+      toggleLiked,
+      unlikeRate,
+    } = useRatesStore();
+    const selectedDay = ref(new Date());
+    const selectedOption = ref("");
     const selectedDate = computed(() =>
-      selected.value.toLocaleString().slice(0, 10)
+      selectedDay.value.toLocaleString().slice(0, 10)
     );
-    return { ratesStore, selected, selectedDate };
+    const sortedRates = computed(() => {
+      return [...ratez.value].sort((r1, r2) =>
+        r1[selectedOption.value]?.localeCompare(r2[selectedOption.value])
+      );
+    });
+
+    return {
+      ratez,
+      selectedDay,
+      selectedOption,
+      selectedDate,
+      sortedRates,
+      getRates,
+    };
   },
   mounted() {
-    this.ratesStore.getRates(this.selectedDate);
+    this.getRates(this.selectedDate);
   },
+  watch: {
+    selectedOption(newValue) {
+      console.log(newValue);
+      this.ratez.sort((r1, r2) => {
+        return r1[newValue]?.localeCompare(r2[newValue]);
+      });
+    },
+  },
+  // watch(selectedOption, (newValue) => {
+  //   console.log(newValue);
+  // });
 };
 </script>
 <style>

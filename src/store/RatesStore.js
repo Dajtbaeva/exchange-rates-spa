@@ -1,85 +1,39 @@
 import { defineStore } from "pinia";
 import { ref, computed, watch } from "vue";
 import axios from "axios";
-import { XMLParser } from "fast-xml-parser";
+// import { XMLParser } from "fast-xml-parser";
 
 const URL = "http://localhost:8010/proxy/rss/get_rates.cfm";
 
 export const useRatesStore = defineStore("rateStore", () => {
   const rates = ref([]);
   const ratez = ref([]);
+  const loading = ref(false);
 
   const ratesInLocalStorage = localStorage.getItem("rates");
   if (ratesInLocalStorage) {
     rates.value = JSON.parse(ratesInLocalStorage).value;
   }
 
-  const likedRates = computed(() => rates.value.filter((el) => el.isLiked));
+  const likedRates = computed(() => ratez.value.filter((el) => el.isLiked));
 
-  const totalRates = computed(() => rates.value.length);
+  const totalRates = computed(() => ratez.value.length);
 
-  const getFakeRates = [
-    {
-      fullname: "АВСТРАЛИЙСКИЙ ДОЛЛАР",
-      title: "AUD",
-      description: "306",
-      quant: 1,
-    },
-    {
-      fullname: "АЗЕРБАЙДЖАНСКИЙ МАНАТ",
-      title: "AZN",
-      description: "260.83",
-      quant: 1,
-    },
-    {
-      fullname: "АРМЯНСКИЙ ДРАМ",
-      title: "AMD",
-      description: "11.41",
-      quant: 10,
-    },
-    {
-      fullname: "БЕЛОРУССКИЙ РУБЛЬ",
-      title: "BYN",
-      description: "175.57",
-      quant: 1,
-    },
-    {
-      fullname: "БРАЗИЛЬСКИЙ РЕАЛ",
-      title: "BRL",
-      description: "84.43",
-      quant: 1,
-    },
-    {
-      fullname: "ВЕНГЕРСКИХ ФОРИНТОВ",
-      title: "HUF",
-      description: "12.52",
-      quant: 10,
-    },
-    {
-      fullname: "ГОНКОНГСКИЙ ДОЛЛАР",
-      title: "HKD",
-      description: "56.32",
-      quant: 1,
-    },
-    {
-      fullname: "ГРУЗИНСКИЙ ЛАРИ",
-      title: "GEL",
-      description: "171.36",
-      quant: 1,
-    },
-    {
-      fullname: "ДАТСКАЯ КРОНА",
-      title: "DKK",
-      description: "DKK",
-      quant: 1,
-    },
-  ];
+  const toggleLiked = (title) => {
+    const idx = ratez.value.findIndex((el) => el.title === title);
+    ratez.value[idx].isLiked = !ratez.value[idx].isLiked;
+  };
+  const unlikeRate = (title) => {
+    ratez.value = ratez.value.filter((el) => el.title !== title);
+    localStorage.setItem("ratez", JSON.stringify(ratez));
+  };
+
   function parseXMLToJSON2(xmlString) {
     const parser = new DOMParser().parseFromString(xmlString, "text/xml");
     console.log("im a parser");
     console.log(parser);
     const currentRates = parser.querySelectorAll("item");
-    for (const item of currentRates) {
+    for (const [index, item] of currentRates.entries()) {
       const rate = {
         fullname: item.querySelector("fullname").textContent,
         title: item.querySelector("title").textContent,
@@ -89,80 +43,57 @@ export const useRatesStore = defineStore("rateStore", () => {
           .querySelector("title")
           .textContent.toLowerCase()
           .slice(0, 2)}.png`,
+        isLiked: false,
       };
       console.log(rate);
+      // ratez.value[index] = rate;
       ratez.value.push(rate);
     }
-    console.log(ratez.value);
+    console.log("Ratez.value from parser function" + ratez.value);
     return ratez.value;
   }
-  function parseXMLToJSON3(xmlString) {
-    const parser = new XMLParser();
-    const currentRates = parser.parse(xmlString);
-     console.log("THIS IS PARSER #3:" + currentRates[0]);
-  }
-  // function parseXMLToJSON(xmlString) {
-  //   const parser = new DOMParser().parseFromString(xmlString, "text/xml");
-  //   const xmlDoc = parser.parseFromString(xmlString, "text/xml");
-  //   const rates = xmlDoc.getElementsByTagName("item");
-  //   const result = [];
-
-  //   for (let i = 0; i < rates.length; i++) {
-  //     const rate = rates[i];
-  //     const item = {
-  //       fullname: rate.getElementsByTagName("fullname")[0].textContent,
-  //       title: rate.getElementsByTagName("title")[0].textContent,
-  //       description: parseFloat(
-  //         rate.getElementsByTagName("description")[0].textContent
-  //       ),
-  //       quant: parseFloat(rate.getElementsByTagName("quant")[0].textContent),
-  //     };
-  //     result.push(item);
-  //   }
-  //   return result;
+  // function parseXMLToJSON3(xmlString) {
+  //   const parser = new XMLParser();
+  //   rates.value = parser.parse(xmlString);
+  //   // const currentRates = parser.parse(xmlString);
+  //   console.log("THIS IS PARSER #3:" + rates.value);
   // }
   const getRates = async (date) => {
-    await axios
-      .get(`${URL}`, {
+    try {
+      loading.value = true;
+      const response = await axios.get(`${URL}`, {
         params: {
           fdate: date,
           // _limit: 10,
         },
-      })
-      .then((response) => {
-        // console.log("Darina:" + response.data);
-        const data = parseXMLToJSON2(response.data);
-        parseXMLToJSON3(response.data);
-        console.log("Darina:" + data);
-      })
-      .catch((error) => console.log("error: " + error));
+      });
+      ratez.value = parseXMLToJSON2(response.data);
+      console.log("Darina:" + ratez.value);
+    } catch (err) {
+      console.log("Your error:" + err);
+    } finally {
+      loading.value = false;
+    }
   };
   // const getRates = async (date) => {
-  //   try {
-  //     const res = await axios.get(`${URL}`, {
+  //   await axios
+  //     .get(`${URL}`, {
   //       params: {
   //         fdate: date,
+  //         // _limit: 10,
   //       },
-  //     });
-  //     const data = await res.json();
-  //     rates.value = data.results;
-  //     console.log(rates);
-  //   } catch (err) {
-  //     alert(err);
-  //   }
+  //     })
+  //     .then((response) => {
+  //       // console.log("Darina:" + response.data);
+  //       const data = parseXMLToJSON2(response.data);
+  //       parseXMLToJSON3(response.data);
+  //       console.log("Darina:" + data);
+  //     })
+  //     .catch((error) => console.log("Error: " + error));
   // };
 
-  const toggleLiked = (title) => {
-    const idx = rates.value.findIndex((el) => el.title === title);
-    rates.value[idx].isWatched = !rates.value[idx].isWatched;
-  };
-  const unlikeRate = (title) => {
-    rates.value = rates.value.filter((el) => el.title !== title);
-    localStorage.setItem("rates", JSON.stringify(rates));
-  };
-
   watch(
-    () => rates,
+    () => ratez,
     (state) => {
       localStorage.setItem("rates", JSON.stringify(state));
     },
@@ -170,10 +101,10 @@ export const useRatesStore = defineStore("rateStore", () => {
   );
 
   return {
+    loading,
     ratez,
     likedRates,
     totalRates,
-    getFakeRates,
     getRates,
     toggleLiked,
     unlikeRate,
