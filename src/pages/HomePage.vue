@@ -17,28 +17,13 @@
     </v-container>
     <v-list v-if="!loading">
       <h3 align="center">Exchange Rates for {{ selectedDate }}</h3>
-      <v-list-item v-for="item of sortedRates" :key="item.title">
-        <template v-slot:default>
-          <v-row align="center" class="card">
-            <v-col cols="1" align="center">
-              <v-img :src="item.icon" height="25" width="70"></v-img>
-            </v-col>
-            <v-col cols="5">
-              <v-list-item-text
-                >{{ item.quant }} {{ item.fullname }}</v-list-item-text
-              ></v-col
-            >
-            <v-col cols="3">
-              <v-list-item-text>{{ item.title }} / KZT</v-list-item-text>
-            </v-col>
-            <v-col cols="2">
-              <v-list-item-text v-text="item.description"></v-list-item-text
-            ></v-col>
-            <v-col cols="1" class="text-right">
-              <v-btn class="ma-2" variant="text" icon="mdi-thumb-up"></v-btn>
-            </v-col>
-          </v-row>
-        </template>
+      <v-list-item>
+        <RateItem
+          v-for="item of sortedRates"
+          :key="item.title"
+          :item="item"
+          @remove="removePost"
+        />
       </v-list-item>
     </v-list>
     <h3 align="center" v-else>Loading...</h3>
@@ -50,10 +35,12 @@ import Datepicker from "vue3-datepicker";
 // import { useRatesStore } from "../store/RatesStore";
 import { useRates } from "../hooks/useRates";
 import useSortedRates from "../hooks/useSortedRates";
+import RateItem from "../components/RateItem.vue";
 
 export default {
   components: {
     Datepicker,
+    RateItem,
   },
   data() {
     return {
@@ -90,6 +77,9 @@ export default {
     //   console.log("This is from watch:" + selectedDate);
     //   getRates(newValue);
     // });
+    function removePost(post) {
+      console.log("removePost is working!");
+    }
 
     return {
       loading,
@@ -99,6 +89,7 @@ export default {
       selectedDay,
       selectedDate,
       sortedRates,
+      removePost,
     };
   },
   // mounted() {
