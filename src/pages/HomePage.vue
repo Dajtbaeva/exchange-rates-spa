@@ -5,7 +5,7 @@
         <datepicker
           v-model="selectedDay"
           class="datepicker"
-          :upper-limit="selectedDay"
+          :upper-limit="Date.now()"
       /></v-col>
       <v-col cols="3">
         <v-autocomplete
@@ -17,7 +17,7 @@
     </v-container>
     <v-list v-if="!loading">
       <h3 align="center">Exchange Rates for {{ selectedDate }}</h3>
-      <v-list-item v-for="item of ratez" :key="item.title">
+      <v-list-item v-for="item of sortedRates" :key="item.title">
         <template v-slot:default>
           <v-row align="center" class="card">
             <v-col cols="1" align="center">
@@ -45,9 +45,11 @@
   </v-container>
 </template>
 <script>
-import { ref, computed } from "vue";
+// import { ref, computed, watch } from "vue";
 import Datepicker from "vue3-datepicker";
-import { useRatesStore } from "../store/RatesStore";
+// import { useRatesStore } from "../store/RatesStore";
+import { useRates } from "../hooks/useRates";
+import useSortedRates from "../hooks/useSortedRates";
 
 export default {
   components: {
@@ -62,49 +64,54 @@ export default {
     };
   },
   setup() {
-    const {
-      loading,
-      ratez,
-      likedRates,
-      totalRates,
-      getRates,
-      toggleLiked,
-      unlikeRate,
-    } = useRatesStore();
-    const selectedDay = ref(new Date());
-    const selectedOption = ref("");
-    const selectedDate = computed(() =>
-      selectedDay.value.toLocaleString().slice(0, 10)
-    );
-    const sortedRates = computed(() => {
-      return [...ratez.value].sort((r1, r2) =>
-        r1[selectedOption.value]?.localeCompare(r2[selectedOption.value])
-      );
-    });
+    // const {
+    //   loading,
+    //   ratez,
+    //   likedRates,
+    //   totalRates,
+    //   getRates,
+    //   toggleLiked,
+    //   unlikeRate,
+    // } = useRatesStore();
+    // const selectedOption = ref("");
+    // const selectedDay = ref(new Date());
+    // const selectedDate = computed(() =>
+    //   selectedDay.value.toLocaleString().slice(0, 10)
+    // );
+    const { loading, ratez, selectedDay, selectedDate } = useRates();
+    const { selectedOption, sortedRates } = useSortedRates(ratez);
+    // const sortedRates = computed(() => {
+    //   return [...ratez].sort((r1, r2) =>
+    //     r1[selectedOption.value]?.localeCompare(r2[selectedOption.value])
+    //   );
+    // });
+
+    // watch(selectedDate, (newValue) => {
+    //   console.log("This is from watch:" + selectedDate);
+    //   getRates(newValue);
+    // });
 
     return {
+      loading,
       ratez,
       selectedDay,
       selectedOption,
+      selectedDay,
       selectedDate,
       sortedRates,
-      getRates,
     };
   },
-  mounted() {
-    this.getRates(this.selectedDate);
-  },
-  watch: {
-    selectedOption(newValue) {
-      console.log(newValue);
-      this.ratez.sort((r1, r2) => {
-        return r1[newValue]?.localeCompare(r2[newValue]);
-      });
-    },
-  },
-  // watch(selectedOption, (newValue) => {
-  //   console.log(newValue);
-  // });
+  // mounted() {
+  //   this.getRates(this.selectedDate);
+  // },
+  // watch: {
+  //   selectedDate(newValue) {
+  //     console.log(newValue);
+  //     this.ratez.sort((r1, r2) => {
+  //       return r1[newValue]?.localeCompare(r2[newValue]);
+  //     });
+  //   },
+  // },
 };
 </script>
 <style>

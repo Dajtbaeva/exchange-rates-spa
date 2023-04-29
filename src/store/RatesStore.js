@@ -3,16 +3,14 @@ import { ref, computed, watch } from "vue";
 import axios from "axios";
 // import { XMLParser } from "fast-xml-parser";
 
-const URL = "http://localhost:8010/proxy/rss/get_rates.cfm";
+// const URL = "http://localhost:8010/proxy/rss/get_rates.cfm";
 
 export const useRatesStore = defineStore("rateStore", () => {
-  const rates = ref([]);
   const ratez = ref([]);
   const loading = ref(false);
-
   const ratesInLocalStorage = localStorage.getItem("rates");
   if (ratesInLocalStorage) {
-    rates.value = JSON.parse(ratesInLocalStorage).value;
+    ratez.value = JSON.parse(ratesInLocalStorage).value;
   }
 
   const likedRates = computed(() => ratez.value.filter((el) => el.isLiked));
@@ -33,7 +31,7 @@ export const useRatesStore = defineStore("rateStore", () => {
     console.log("im a parser");
     console.log(parser);
     const currentRates = parser.querySelectorAll("item");
-    for (const [index, item] of currentRates.entries()) {
+    for (const item of currentRates) {
       const rate = {
         fullname: item.querySelector("fullname").textContent,
         title: item.querySelector("title").textContent,
@@ -93,15 +91,14 @@ export const useRatesStore = defineStore("rateStore", () => {
   // };
 
   watch(
-    () => ratez,
     (state) => {
       localStorage.setItem("rates", JSON.stringify(state));
     },
     { deep: true }
   );
+  // onMounted(getRates);
 
   return {
-    loading,
     ratez,
     likedRates,
     totalRates,
