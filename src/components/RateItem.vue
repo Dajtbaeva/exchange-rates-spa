@@ -15,12 +15,11 @@
       <v-list-item-text v-text="item.description"></v-list-item-text
     ></v-col>
     <v-col cols="1" class="text-right">
-      <!-- :icon="item.isLiked ? 'mdi-thumb-down' : 'mdi-thumb-up'" -->
       <v-btn
         class="ma-2"
         variant="text"
         :icon="item.isLiked ? 'mdi-thumb-down' : 'mdi-thumb-up'"
-        @click="item.isLiked ? unlikeRate : likeRate"
+        @click="item.isLiked ? unlikeRate() : likeRate()"
         :color="item.isLiked ? 'red-lighten-2' : 'blue-lighten-2'"
       ></v-btn>
     </v-col>
@@ -44,6 +43,7 @@ export default {
     };
     const unlikeRate = () => {
       ratesStore.unlikeRate(props.item);
+      console.log("from unlike " + props.item.title);
     };
     return { likeRate, unlikeRate };
   },

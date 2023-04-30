@@ -25,9 +25,7 @@
   </v-container>
 </template>
 <script>
-// import { ref, computed, watch } from "vue";
 import Datepicker from "vue3-datepicker";
-// import { useRatesStore } from "../store/RatesStore";
 import { useRates } from "../hooks/useRates";
 import useSortedRates from "../hooks/useSortedRates";
 import RateItem from "../components/RateItem.vue";
@@ -113,5 +111,8 @@ export default {
   border: 1px solid #5f5f5f;
   margin: 0;
   padding: 0;
+}
+h3 {
+  margin-bottom: 30px;
 }
 </style>

@@ -1,8 +1,11 @@
 import axios from "axios";
 import { ref, computed, watch, onMounted } from "vue";
+import { useRatesStore } from "../store/RatesStore";
 
 export function useRates() {
   const ratez = ref([]);
+  const { favRatez } = useRatesStore();
+
   //   const tempRatez = ref([]);
   const selectedDay = ref(new Date());
   const selectedDate = computed(() =>
@@ -54,6 +57,10 @@ export function useRates() {
           .slice(0, 2)}.png`,
         isLiked: false,
       };
+      const favRate = favRatez.find((r) => r.title === rate.title);
+      if (favRate) {
+        rate.isLiked = true;
+      }
       console.log(rate);
       tempRatez.push(rate);
     }

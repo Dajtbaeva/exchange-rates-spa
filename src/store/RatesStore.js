@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, computed, watch } from "vue";
+import { ref, watch } from "vue";
 // import axios from "axios";
 // import { XMLParser } from "fast-xml-parser";
 // const URL = "http://localhost:8010/proxy/rss/get_rates.cfm";
@@ -8,29 +8,27 @@ export const useRatesStore = defineStore("rateStore", () => {
   const favRatez = ref([]);
   const ratesInLocalStorage = localStorage.getItem("rates");
   if (ratesInLocalStorage !== null) {
-    favRatez.value = JSON.parse(ratesInLocalStorage);
+    favRatez.value = JSON.parse(ratesInLocalStorage)._value;
+  } else {
+    favRatez.value = ref([]);
   }
-
-  const likedRates = computed(() => favRatez.value.filter((el) => el.isLiked));
-
-  const totalRates = computed(() => favRatez.value.length);
-
-  const toggleLiked = (title) => {
-    const idx = favRatez.value.findIndex((el) => el.title === title);
-    favRatez.value[idx].isLiked = !favRatez.value[idx].isLiked;
-  };
 
   const unlikeRate = (object) => {
     const title = object.title;
-    // const updatedRates = favRatez.value.filter((el) => el.title !== title);
+    object.isLiked = false;
     favRatez.value = favRatez.value.filter((el) => el.title !== title);
+    console.log(favRatez.value);
     localStorage.setItem("rates", JSON.stringify(favRatez.value));
-    // localStorage.setItem("rates", JSON.stringify(updatedRates));
   };
 
   const likeRate = (object) => {
     object.isLiked = true;
-    favRatez.value.push(object);
+    if (favRatez.value) {
+      favRatez.value.push(object);
+    } else {
+      favRatez.value = [object];
+    }
+    console.log(favRatez.value);
     localStorage.setItem("rates", JSON.stringify(favRatez.value));
   };
 
@@ -43,8 +41,6 @@ export const useRatesStore = defineStore("rateStore", () => {
   );
   return {
     favRatez,
-    likedRates,
-    totalRates,
     likeRate,
     unlikeRate,
   };
