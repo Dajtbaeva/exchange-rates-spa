@@ -15,17 +15,37 @@
       <v-list-item-text v-text="item.description"></v-list-item-text
     ></v-col>
     <v-col cols="1" class="text-right">
-      <v-btn class="ma-2" variant="text" icon="mdi-thumb-up" @click="$emit('remove', post)"></v-btn>
+      <!-- :icon="item.isLiked ? 'mdi-thumb-down' : 'mdi-thumb-up'" -->
+      <v-btn
+        class="ma-2"
+        variant="text"
+        :icon="item.isLiked ? 'mdi-thumb-down' : 'mdi-thumb-up'"
+        @click="item.isLiked ? unlikeRate : likeRate"
+        :color="item.isLiked ? 'red-lighten-2' : 'blue-lighten-2'"
+      ></v-btn>
     </v-col>
   </v-row>
 </template>
 <script>
+import { useRatesStore } from "../store/RatesStore";
+
 export default {
   props: {
     item: {
       type: Object,
       required: true,
     },
+  },
+  setup(props) {
+    const ratesStore = useRatesStore();
+    const likeRate = () => {
+      ratesStore.likeRate(props.item);
+      console.log("from like" + props.item);
+    };
+    const unlikeRate = () => {
+      ratesStore.unlikeRate(props.item);
+    };
+    return { likeRate, unlikeRate };
   },
 };
 </script>

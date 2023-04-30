@@ -18,12 +18,7 @@
     <v-list v-if="!loading">
       <h3 align="center">Exchange Rates for {{ selectedDate }}</h3>
       <v-list-item>
-        <RateItem
-          v-for="item of sortedRates"
-          :key="item.title"
-          :item="item"
-          @remove="removePost"
-        />
+        <RateItem v-for="item of sortedRates" :key="item.title" :item="item" />
       </v-list-item>
     </v-list>
     <h3 align="center" v-else>Loading...</h3>
@@ -77,10 +72,6 @@ export default {
     //   console.log("This is from watch:" + selectedDate);
     //   getRates(newValue);
     // });
-    function removePost(post) {
-      console.log("removePost is working!");
-    }
-
     return {
       loading,
       ratez,
@@ -89,7 +80,6 @@ export default {
       selectedDay,
       selectedDate,
       sortedRates,
-      removePost,
     };
   },
   // mounted() {
