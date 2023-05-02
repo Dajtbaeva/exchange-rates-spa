@@ -18,8 +18,20 @@
     <v-list v-if="!loading">
       <h3 align="center">Exchange Rates for {{ selectedDate }}</h3>
       <v-list-item>
-        <RateItem v-for="item of sortedRates" :key="item.title" :item="item" />
+        <RateItem
+          v-for="item of displayedRates"
+          :key="item.title"
+          :item="item"
+        />
       </v-list-item>
+      <v-container class="max-width">
+        <v-pagination
+          v-model="page"
+          :length="totalPages"
+          :total-visible="4"
+          rounded="circle"
+        ></v-pagination>
+      </v-container>
     </v-list>
     <h3 align="center" v-else>Loading...</h3>
   </v-container>
@@ -29,6 +41,7 @@ import Datepicker from "vue3-datepicker";
 import { useRates } from "../hooks/useRates";
 import useSortedRates from "../hooks/useSortedRates";
 import RateItem from "../components/RateItem.vue";
+import { ref, watch, computed } from "vue";
 
 export default {
   components: {
@@ -65,11 +78,24 @@ export default {
     //     r1[selectedOption.value]?.localeCompare(r2[selectedOption.value])
     //   );
     // });
+    const page = ref(1);
 
+    const displayedRates = computed(() => {
+      const startIndex = (page.value - 1) * 5;
+      const endIndex = startIndex + 5;
+      return sortedRates.value.slice(startIndex, endIndex);
+    });
+    const totalPages = computed(() => {
+      return Math.ceil(sortedRates.value.length / 5);
+    });
     // watch(selectedDate, (newValue) => {
     //   console.log("This is from watch:" + selectedDate);
     //   getRates(newValue);
     // });
+    watch(selectedDay, () => {
+      page.value = 1;
+    });
+
     return {
       loading,
       ratez,
@@ -77,7 +103,9 @@ export default {
       selectedOption,
       selectedDay,
       selectedDate,
-      sortedRates,
+      page,
+      displayedRates,
+      totalPages,
     };
   },
   // mounted() {
