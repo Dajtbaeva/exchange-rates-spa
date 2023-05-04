@@ -6,7 +6,6 @@ import { useRatesStore } from "../store/RatesStore";
 export function useRates() {
   const ratez = ref([]);
   const { favRatez } = useRatesStore();
-  // const ratesStore = useRatesStore();
 
   const selectedDay = ref(new Date());
   const selectedDate = computed(() =>
