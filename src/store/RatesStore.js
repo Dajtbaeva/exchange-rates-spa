@@ -4,9 +4,11 @@ import { ref, watch } from "vue";
 export const useRatesStore = defineStore("rateStore", () => {
   const favRatez = ref([]);
   const ratesInLocalStorage = localStorage.getItem("rates");
-  ratesInLocalStorage !== null
-    ? (favRatez.value = JSON.parse(ratesInLocalStorage)._value)
-    : (favRatez.value = ref([]));
+  if (ratesInLocalStorage !== null) {
+    favRatez.value = JSON.parse(ratesInLocalStorage);
+  } else {
+    favRatez.value = ref([]);
+  }
 
   const unlikeRate = (object) => {
     const title = object.title;
@@ -17,12 +19,20 @@ export const useRatesStore = defineStore("rateStore", () => {
 
   const likeRate = (object) => {
     object.isLiked = true;
-    favRatez.value ? favRatez.value.push(object) : (favRatez.value = [object]);
+    console.log(favRatez);
+    console.log(favRatez.value);
+    // console.log(favRatez.value.target);
+
+    if (favRatez.value.length > 0) {
+      favRatez.value.push(object);
+    } else {
+      favRatez.value = [object];
+    }
     localStorage.setItem("rates", JSON.stringify(favRatez.value));
   };
 
   watch(
-    () => favRatez,
+    () => favRatez.value,
     (state) => {
       localStorage.setItem("rates", JSON.stringify(state));
     },

@@ -6,6 +6,7 @@ import { useRatesStore } from "../store/RatesStore";
 export function useRates() {
   const ratez = ref([]);
   const { favRatez } = useRatesStore();
+  // const ratesStore = useRatesStore();
 
   const selectedDay = ref(new Date());
   const selectedDate = computed(() =>
@@ -32,9 +33,11 @@ export function useRates() {
           .slice(0, 2)}.png`,
         isLiked: false,
       };
-      const favRate = favRatez.find((r) => r.title === rate.title);
-      if (favRate) {
-        rate.isLiked = true;
+      if (favRatez.value) {
+        const favRate = favRatez.value.find((r) => r.title === rate.title);
+        if (favRate) {
+          rate.isLiked = true;
+        }
       }
       // console.log(rate);
       tempRatez.push(rate);
