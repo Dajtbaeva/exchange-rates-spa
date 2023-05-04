@@ -57,27 +57,8 @@ export default {
     };
   },
   setup() {
-    // const {
-    //   loading,
-    //   ratez,
-    //   likedRates,
-    //   totalRates,
-    //   getRates,
-    //   toggleLiked,
-    //   unlikeRate,
-    // } = useRatesStore();
-    // const selectedOption = ref("");
-    // const selectedDay = ref(new Date());
-    // const selectedDate = computed(() =>
-    //   selectedDay.value.toLocaleString().slice(0, 10)
-    // );
     const { loading, ratez, selectedDay, selectedDate } = useRates();
     const { selectedOption, sortedRates } = useSortedRates(ratez);
-    // const sortedRates = computed(() => {
-    //   return [...ratez].sort((r1, r2) =>
-    //     r1[selectedOption.value]?.localeCompare(r2[selectedOption.value])
-    //   );
-    // });
     const page = ref(1);
 
     const displayedRates = computed(() => {
@@ -88,10 +69,6 @@ export default {
     const totalPages = computed(() => {
       return Math.ceil(sortedRates.value.length / 5);
     });
-    // watch(selectedDate, (newValue) => {
-    //   console.log("This is from watch:" + selectedDate);
-    //   getRates(newValue);
-    // });
     watch(selectedDay, () => {
       page.value = 1;
     });
@@ -108,17 +85,6 @@ export default {
       totalPages,
     };
   },
-  // mounted() {
-  //   this.getRates(this.selectedDate);
-  // },
-  // watch: {
-  //   selectedDate(newValue) {
-  //     console.log(newValue);
-  //     this.ratez.sort((r1, r2) => {
-  //       return r1[newValue]?.localeCompare(r2[newValue]);
-  //     });
-  //   },
-  // },
 };
 </script>
 <style>
@@ -127,7 +93,6 @@ export default {
   justify-content: space-between;
   align-items: center;
   align-content: center;
-  /* margin: 0; */
   padding: 0;
 }
 .datepicker {

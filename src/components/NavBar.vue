@@ -8,9 +8,7 @@
       @click="$router.push('/')"
     ></v-img>
     <v-app-bar-title>National Bank of Kazakhstan</v-app-bar-title>
-
     <v-spacer></v-spacer>
-
     <v-btn icon @click="$router.push('/favourites')">
       <v-icon>mdi-heart</v-icon>
     </v-btn>
