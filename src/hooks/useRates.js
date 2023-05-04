@@ -33,8 +33,9 @@ export function useRates() {
           .slice(0, 2)}.png`,
         isLiked: false,
       };
-      if (favRatez.value) {
-        const favRate = favRatez.value.find((r) => r.title === rate.title);
+      if (favRatez) {
+        // console.log(favRatez);
+        const favRate = favRatez.find((r) => r.title === rate.title);
         if (favRate) {
           rate.isLiked = true;
         }
