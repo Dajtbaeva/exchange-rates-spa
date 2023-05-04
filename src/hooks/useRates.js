@@ -1,6 +1,7 @@
 import axios from "axios";
 import { ref, computed, watch, onMounted } from "vue";
 import { useRatesStore } from "../store/RatesStore";
+// import { XMLParser } from "fast-xml-parser";
 
 export function useRates() {
   const ratez = ref([]);
@@ -13,11 +14,10 @@ export function useRates() {
 
   const loading = ref(false);
   const URL = "http://localhost:8010/proxy/rss/get_rates.cfm";
+  // used local-cors-proxy package to avoid cors error
 
   function parseXMLToJSON(xmlString) {
     const parser = new DOMParser().parseFromString(xmlString, "text/xml");
-    console.log("im a parser");
-    console.log(parser);
     const tempRatez = [];
     const currentRates = parser.querySelectorAll("item");
     for (const item of currentRates) {
@@ -36,11 +36,10 @@ export function useRates() {
       if (favRate) {
         rate.isLiked = true;
       }
-      console.log(rate);
+      // console.log(rate);
       tempRatez.push(rate);
     }
     [...ratez.value] = tempRatez;
-    console.log("Ratez.value from parser function" + ratez.value);
     return ratez.value;
   }
 
@@ -53,16 +52,14 @@ export function useRates() {
         },
       });
       ratez.value = parseXMLToJSON(response.data);
-      console.log("Darina:" + ratez.value);
     } catch (err) {
-      console.log("Your error:" + err);
+      console.log("Error:" + err);
     } finally {
       loading.value = false;
     }
   };
 
   watch(selectedDate, () => {
-    console.log("This is from watch:" + selectedDate);
     getRates();
   });
 

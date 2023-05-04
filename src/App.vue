@@ -1,5 +1,5 @@
 <template>
-  <VApp bg-grey>
+  <VApp>
     <NavBar />
     <VMain>
       <router-view></router-view>

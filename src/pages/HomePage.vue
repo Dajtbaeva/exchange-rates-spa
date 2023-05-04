@@ -60,14 +60,15 @@ export default {
     const { loading, ratez, selectedDay, selectedDate } = useRates();
     const { selectedOption, sortedRates } = useSortedRates(ratez);
     const page = ref(1);
+    const itemsPerPage = 8;
 
     const displayedRates = computed(() => {
-      const startIndex = (page.value - 1) * 5;
-      const endIndex = startIndex + 5;
+      const startIndex = (page.value - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
       return sortedRates.value.slice(startIndex, endIndex);
     });
     const totalPages = computed(() => {
-      return Math.ceil(sortedRates.value.length / 5);
+      return Math.ceil(sortedRates.value.length / itemsPerPage);
     });
     watch(selectedDay, () => {
       page.value = 1;
@@ -75,13 +76,11 @@ export default {
 
     return {
       loading,
-      ratez,
+      displayedRates,
       selectedDay,
       selectedOption,
-      selectedDay,
       selectedDate,
       page,
-      displayedRates,
       totalPages,
     };
   },

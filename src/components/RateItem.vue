@@ -39,11 +39,9 @@ export default {
     const ratesStore = useRatesStore();
     const likeRate = () => {
       ratesStore.likeRate(props.item);
-      console.log("from like" + props.item);
     };
     const unlikeRate = () => {
       ratesStore.unlikeRate(props.item);
-      console.log("from unlike " + props.item.title);
     };
     return { likeRate, unlikeRate };
   },
