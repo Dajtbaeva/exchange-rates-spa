@@ -32,7 +32,7 @@ export function useRates() {
           .slice(0, 2)}.png`,
         isLiked: false,
       };
-      const favRate = favRatez.value.find((r) => r.title === rate.title);
+      const favRate = favRatez.find((r) => r.title === rate.title);
       if (favRate) {
         rate.isLiked = true;
       }
