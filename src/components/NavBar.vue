@@ -16,11 +16,6 @@
 </template>
 <script>
 export default {
-  setup() {
-    const OpenPage = () => {
-      router.push("/favourites");
-    };
-    return { OpenPage };
-  },
+  setup() {},
 };
 </script>
