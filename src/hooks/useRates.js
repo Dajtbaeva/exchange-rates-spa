@@ -13,7 +13,8 @@ export function useRates() {
   );
 
   const loading = ref(false);
-  const URL = "http://localhost:8010/proxy/rss/get_rates.cfm";
+  const URL = "https://nationalbank.kz/rss/get_rates.cfm";
+  // const URL = "http://localhost:8010/proxy/rss/get_rates.cfm";
   // used local-cors-proxy package to avoid cors error
 
   function parseXMLToJSON(xmlString) {
